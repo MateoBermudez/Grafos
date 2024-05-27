@@ -81,25 +81,49 @@ public class Main {
                     grafo.DistanciaMinima(origen);
                     break;
                 case "8":
-
+                    System.out.println("Ingrese el nuevo vertice: ");
+                    char nuevoVertice = lea.next().toUpperCase().charAt(0);
+                    if (!grafo.VerticeInexistente(nuevoVertice)){
+                        System.out.println("El vertice ingresado ya existe en el grafo");
+                        break;
+                    }
+                    grafo.AgregarVertice(nuevoVertice);
                     break;
                 case "9":
-
+                    System.out.println("Ingrese la nueva arista -> (A,B,PesoArista):");
+                    String nuevaArista = lea.next().toUpperCase();
+                    nuevaArista = ReplaceAristas(nuevaArista);
+                    grafo.AgregarArista(nuevaArista);
                     break;
                 case "10":
-
+                    System.out.println("Ingrese el vertice a eliminar: ");
+                    char verticeEliminar = lea.next().toUpperCase().charAt(0);
+                    if (grafo.VerticeInexistente(verticeEliminar)){
+                        System.out.println("El vertice ingresado no existe en el grafo");
+                        break;
+                    }
+                    grafo.EliminarVertice(verticeEliminar);
                     break;
                 case "11":
-
+                    System.out.println("Ingrese la arista a eliminar -> (A,B,NumeroDelCamino(Opcion 2)): ");
+                    String aristaEliminar = lea.next().toUpperCase();
+                    aristaEliminar = ReplaceAristas(aristaEliminar);
+                    grafo.EliminarArista(aristaEliminar);
                     break;
                 case "12":
-
+                    System.out.println("Ingrese el vertice a buscar: ");
+                    char verticeBuscar = lea.next().toUpperCase().charAt(0);
+                    if (grafo.VerticeInexistente(verticeBuscar)) {
+                        System.out.println("El vertice ingresado no existe en el grafo");
+                    } else {
+                        System.out.println("El vertice ingresado existe en el grafo");
+                    }
                     break;
                 case "13":
-
+                    
                     break;
                 case "14":
-
+                    grafoCreado = false;
                     break;
                 case "15":
                     salir = true;
@@ -136,6 +160,13 @@ public class Main {
         System.out.println("5. Recorrido en profundidad (DFS)");
         System.out.println("6. Recorrido en amplitud (BFS)");
         System.out.println("7. Distancia mas corta/Distancia Alternativa (Dijkstra)");
+        System.out.println("8. Ingresar un nuevo vertice");
+        System.out.println("9. Ingresar una nueva arista");
+        System.out.println("10. Eliminar un vertice");
+        System.out.println("11. Eliminar una arista");
+        System.out.println("12. Buscar la existencia de un vertice");
+        System.out.println("13. Mostrar grafo graficamente");
+        System.out.println("14. Reiniciar Grafo (Para crear un nuevo grafo --> (Opcion 1))");
         System.out.println("15. Salir");
     }
 

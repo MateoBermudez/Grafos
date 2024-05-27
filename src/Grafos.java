@@ -59,16 +59,7 @@ public class Grafos {
     }
 
     private int ConseguirPeso(String aristas, int i) {
-        StringBuilder peso = new StringBuilder();
-        for (int j = i; j < aristas.length(); j++) {
-            if (aristas.charAt(j) != ' ' && aristas.charAt(j) != ',' && aristas.charAt(j) != ';') {
-                peso.append(aristas.charAt(j));
-            }
-            else {
-                return Integer.parseInt(peso.toString());
-            }
-        }
-        return Integer.parseInt(peso.toString());
+        return getPesoOrCamino(aristas, i);
     }
 
     private Nodo NodoFinalLista(Nodo nodo) {
@@ -80,9 +71,10 @@ public class Grafos {
     }
 
     private void LlenarListaAdyacencia(String vertices) {
+        int index = 0;
         for (int i = 0; i < vertices.length(); i++) {
-            if (vertices.charAt(i) != ' ') {
-                relacionListaAdyacencia[i] = vertices.charAt(i);
+            if (vertices.charAt(i) != ',' && vertices.charAt(i) != ' '){
+                relacionListaAdyacencia[index++] = vertices.charAt(i);
             }
         }
     }
@@ -184,7 +176,7 @@ public class Grafos {
     }
 
     //Busca el indice en la relacion de la lista Adyacencia del vertice con char V, devuelve el indice si lo encuentra, si no devuelve -1
-    private int BuscarIndice(char v) {
+    public int BuscarIndice(char v) {
         for (int i = 0; i < relacionListaAdyacencia.length; i++) {
             if (relacionListaAdyacencia[i] == v) {
                 return i;
@@ -198,19 +190,15 @@ public class Grafos {
         if (num == -1) {
             return;
         }
-
         boolean[] visitado = new boolean[relacionListaAdyacencia.length];
         char[] array = new char[relacionListaAdyacencia.length];
-
         visitado[num] = true;
         array[0] = v;
-
         int index = 0;
         int end = 1; //end es el indice del ultimo elemento del array
         while (index < end) {
             char nodo = array[index];
             System.out.print(nodo + " ");
-
             Nodo p = listaAdyacencia[BuscarIndice(nodo)];
             while (p != null) {
                 char vecino = p.getVertice();
@@ -270,7 +258,8 @@ public class Grafos {
         for (int i = 0; i < relacionListaAdyacencia.length; i++) {
             if (distancias[i] == Integer.MAX_VALUE) {
                 System.out.println(relacionListaAdyacencia[i] + " es inalcanzable desde " + origen);
-            } else {
+            }
+            else {
                 System.out.print("Distancia a " + relacionListaAdyacencia[i] + ": " + distancias[i]);
                 System.out.print(", camino: " + relacionListaAdyacencia[i]);
                 int predecesorNodo = predecesor[i];
@@ -290,5 +279,139 @@ public class Grafos {
             }
         }
         return true;
+    }
+
+    public void AgregarVertice(char nuevoVertice) {
+        int tam = relacionListaAdyacencia.length+1;
+        Nodo[] nuevaListaNodos = new Nodo[tam];
+        char[] nuevaLista = new char[tam];
+        for (int i = 0; i < relacionListaAdyacencia.length; i++) {
+            nuevaLista[i] = relacionListaAdyacencia[i];
+        }
+        nuevaLista[tam-1] = nuevoVertice;
+        relacionListaAdyacencia = nuevaLista;
+        for (int i = 0; i < listaAdyacencia.length; i++) {
+            nuevaListaNodos[i] = listaAdyacencia[i];
+        }
+        nuevaListaNodos[tam-1] = null;
+        listaAdyacencia = nuevaListaNodos;
+    }
+
+    public void AgregarArista(String nuevaArista) {
+        int caminoIda = EncontrarUltimoCamino()+1;
+        char origen = nuevaArista.charAt(0);
+        char destino = nuevaArista.charAt(2);
+        int peso = ConseguirPeso(nuevaArista, 4);
+        for (int aux = 0; aux < relacionListaAdyacencia.length; aux++) {
+            if (relacionListaAdyacencia[aux] == origen) {
+                EnlazarListaAdyacencia(caminoIda, destino, peso, aux);
+            }
+            if (relacionListaAdyacencia[aux] == destino) {
+                EnlazarListaAdyacencia(caminoIda, origen, peso, aux);
+            }
+        }
+    }
+
+    private int EncontrarUltimoCamino() {
+        int ultimoCamino = listaAdyacencia[0].getCamino();
+        for (int i = 1; i < listaAdyacencia.length; i++) {
+            Nodo p = listaAdyacencia[i];
+            while (p != null) {
+                if (p.getCamino() > ultimoCamino) {
+                    ultimoCamino = p.getCamino();
+                }
+                p = p.getLiga();
+            }
+        }
+        return ultimoCamino;
+    }
+
+
+    //Arreglar los eliminar (Revisar y Testear) -> Testear
+    public void EliminarVertice(char verticeEliminar) {
+        StringBuilder vertices = new StringBuilder();
+        StringBuilder aristas = new StringBuilder();
+        StringBuilder CaminosPasados = new StringBuilder();
+        for (char c : relacionListaAdyacencia) {
+            if (c != verticeEliminar) {
+                vertices.append(c).append(",");
+            }
+        }
+        for (int i = 0; i < listaAdyacencia.length; i++) {
+            Nodo p = listaAdyacencia[i];
+            while (p != null) {
+                if (p.getVertice() != verticeEliminar && CaminoNoExiste(p.getCamino(), CaminosPasados.toString()) && relacionListaAdyacencia[i] != verticeEliminar) {
+                    aristas.append(relacionListaAdyacencia[i]).append(",").append(p.getVertice()).append(",").append(p.getPeso()).append(";");
+                    CaminosPasados.append(p.getCamino()).append(",");
+                }
+                p = p.getLiga();
+            }
+        }
+        ReSizeGlobalVariables(relacionListaAdyacencia.length-1, aristas.toString().split(";").length);
+        CrearGrafo(vertices.toString(), aristas.toString());
+    }
+
+    private boolean CaminoNoExiste(int camino, String Caminos) {
+        int caminoAux;
+        StringBuilder aux;
+        for (int i = 0; i < Caminos.length(); i++) {
+            aux = new StringBuilder();
+            while (Character.isDigit(Caminos.charAt(i))) {
+                aux.append(Caminos.charAt(i));
+                i++;
+            }
+            caminoAux = Integer.parseInt(aux.toString());
+            if (caminoAux == camino) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void ReSizeGlobalVariables(int numVertices, int numAristas) {
+        listaAdyacencia = new Nodo[numVertices];
+        relacionListaAdyacencia = new char[numVertices];
+        matrizAdyacencia = new int[numVertices][numVertices];
+        matrizIncidencia = new int[numVertices][numAristas];
+        visitado = new int[numVertices];
+    }
+
+    public void EliminarArista(String aristaEliminar) {
+        StringBuilder aristas = new StringBuilder();
+        StringBuilder vertices = new StringBuilder();
+        StringBuilder caminosPasados = new StringBuilder();
+        for (int i = 0; i < listaAdyacencia.length; i++) {
+            Nodo p = listaAdyacencia[i];
+            while (p != null) {
+                if ((relacionListaAdyacencia[i] != aristaEliminar.charAt(0) || p.getVertice() != aristaEliminar.charAt(2)) && CaminoNoExiste(p.getCamino(), caminosPasados.toString())
+                && ConseguirCamino(aristaEliminar) != p.getCamino()) {
+                    aristas.append(relacionListaAdyacencia[i]).append(",").append(p.getVertice()).append(",").append(p.getPeso()).append(";");
+                    caminosPasados.append(p.getCamino()).append(",");
+                }
+                p = p.getLiga();
+            }
+        }
+        for (char c : relacionListaAdyacencia) {
+            vertices.append(c).append(",");
+        }
+        ReSizeGlobalVariables(relacionListaAdyacencia.length, aristas.toString().split(";").length);
+        CrearGrafo(vertices.toString(), aristas.toString());
+    }
+
+    private int ConseguirCamino(String aristaEliminar) {
+        return getPesoOrCamino(aristaEliminar, 4);
+    }
+
+    private int getPesoOrCamino(String aristaEliminar, int start) {
+        StringBuilder camino = new StringBuilder();
+        for (int i = start; i < aristaEliminar.length(); i++) {
+            if (aristaEliminar.charAt(i) != ' ' && aristaEliminar.charAt(i) != ',' && aristaEliminar.charAt(i) != ';') {
+                camino.append(aristaEliminar.charAt(i));
+            }
+            else {
+                return Integer.parseInt(camino.toString());
+            }
+        }
+        return Integer.parseInt(camino.toString());
     }
 }

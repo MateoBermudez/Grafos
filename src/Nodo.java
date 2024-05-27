@@ -1,6 +1,7 @@
 public class Nodo {
-    private char vertice;
-    private int peso, camino;
+    private final char vertice;
+    private final int peso;
+    private final int camino;
     private Nodo liga;
 
     public Nodo(char vertice, int peso, int camino, Nodo liga) {
@@ -14,24 +15,12 @@ public class Nodo {
         return vertice;
     }
 
-    public void setVertice(char vertice) {
-        this.vertice = vertice;
-    }
-
     public int getPeso() {
         return peso;
     }
 
-    public void setPeso(int peso) {
-        this.peso = peso;
-    }
-
     public int getCamino() {
         return camino;
-    }
-
-    public void setCamino(int camino) {
-        this.camino = camino;
     }
 
     public Nodo getLiga() {
