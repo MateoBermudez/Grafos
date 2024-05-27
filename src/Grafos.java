@@ -285,14 +285,10 @@ public class Grafos {
         int tam = relacionListaAdyacencia.length+1;
         Nodo[] nuevaListaNodos = new Nodo[tam];
         char[] nuevaLista = new char[tam];
-        for (int i = 0; i < relacionListaAdyacencia.length; i++) {
-            nuevaLista[i] = relacionListaAdyacencia[i];
-        }
+        System.arraycopy(relacionListaAdyacencia, 0, nuevaLista, 0, relacionListaAdyacencia.length);
         nuevaLista[tam-1] = nuevoVertice;
         relacionListaAdyacencia = nuevaLista;
-        for (int i = 0; i < listaAdyacencia.length; i++) {
-            nuevaListaNodos[i] = listaAdyacencia[i];
-        }
+        System.arraycopy(listaAdyacencia, 0, nuevaListaNodos, 0, listaAdyacencia.length);
         nuevaListaNodos[tam-1] = null;
         listaAdyacencia = nuevaListaNodos;
     }

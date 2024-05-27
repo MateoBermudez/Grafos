@@ -120,12 +120,9 @@ public class Main {
                     }
                     break;
                 case "13":
-                    
-                    break;
-                case "14":
                     grafoCreado = false;
                     break;
-                case "15":
+                case "14":
                     salir = true;
                     break;
                 default:
@@ -165,9 +162,8 @@ public class Main {
         System.out.println("10. Eliminar un vertice");
         System.out.println("11. Eliminar una arista");
         System.out.println("12. Buscar la existencia de un vertice");
-        System.out.println("13. Mostrar grafo graficamente");
-        System.out.println("14. Reiniciar Grafo (Para crear un nuevo grafo --> (Opcion 1))");
-        System.out.println("15. Salir");
+        System.out.println("13. Reiniciar Grafo (Para crear un nuevo grafo --> (Opcion 1))");
+        System.out.println("14. Salir");
     }
 
     private static String ReplaceVertices(String vertices) {
